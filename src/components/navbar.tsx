@@ -20,7 +20,7 @@ function Navbar() {
             <FaLinkedin />
         </div>
         <div>
-            <h1 className='font-extrabold text-2xl'>Inklet</h1>
+            <h1 className='font-extrabold text-2xl'>inklet.</h1>
         </div>
         <div className='md:flex gap-4 font-medium hidden text-sm'>
             <button className='flex items-center gap-1' onClick={toggleTheme}>
