@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { RxCrossCircled } from "react-icons/rx";
 import { IoImagesOutline } from "react-icons/io5";
-import { IoVideocamOutline } from "react-icons/io5";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useImageUpload } from "@/hooks/useImageUpload";
+import Image from "next/image";
 
 // Custom Rich Text Editor Component
 function RichTextEditor({
@@ -18,6 +19,13 @@ function RichTextEditor({
 }) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
+
+  // Set initial content when value changes
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value;
+    }
+  }, [value]);
 
   const handleInput = () => {
     if (editorRef.current) {
@@ -118,13 +126,69 @@ function RichTextEditor({
 
 function WritePage() {
   const [open, setOpen] = useState(false);
-  const [content, setContent] = useState("");
   const { status } = useSession();
   const router = useRouter();
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+    img: "",
+    category: "",
+  });
+  const { uploadImage, uploading, error } = useImageUpload();
+  const [submitting, setSubmitting] = useState(false);
 
-  if (status !== "authenticated") {
-    router.push("/login");
-  }
+  // Handle authentication redirect
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  const handleImageUpload = async (selectedFile: File) => {
+    try {
+      const imageUrl = await uploadImage(selectedFile);
+      setFormData({ ...formData, img: imageUrl });
+    } catch (err) {
+      console.error("Failed to upload image:", err);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.content) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          content: formData.content,
+          img: formData.img,
+          desc: formData.content.substring(0, 150) + "...", // Generate description from content
+          catSlug: formData.category, // You can add category selection later
+        }),
+      });
+
+      if (response.ok) {
+        const post = await response.json();
+        router.push(`/posts/${post.slug}`);
+      } else {
+        throw new Error("Failed to create post");
+      }
+    } catch (err) {
+      console.error("Error creating post:", err);
+      alert("Failed to create post. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (status === "loading") {
     return (
       <div className="px-48 w-full h-screen flex items-center justify-center">
@@ -135,13 +199,39 @@ function WritePage() {
       </div>
     );
   }
+
+  if (status === "unauthenticated") {
+    return (
+      <div className="px-48 w-full h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-lg text-gray-600">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-20 px-48 w-full h-screen flex flex-col gap-4">
       <input
         type="text"
         placeholder="Title"
         className="text-5xl w-full outline-none"
+        value={formData.title}
+        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
       />
+      <select
+        className="w-full p-2 rounded-md bg-gray-200 text-black"
+        value={formData.category}
+        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+      >
+        <option value="">Select Category</option>
+        <option value="travel">Travel</option>
+        <option value="food">Food</option>
+        <option value="coding">Coding</option>
+        <option value="culture">Culture</option>
+        <option value="style">Style</option>
+        <option value="fashion">Fashion</option>
+      </select>
       <div className="flex gap-4">
         <button onClick={() => setOpen(!open)}>
           {!open ? (
@@ -152,14 +242,59 @@ function WritePage() {
         </button>
         {open && (
           <div className="flex gap-4">
-            <IoImagesOutline size={30} className="text-gray-500" />
-            <IoVideocamOutline size={30} className="text-gray-500" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                  const selectedFile = e.target.files[0];
+                  await handleImageUpload(selectedFile);
+                }
+              }}
+              className="hidden"
+              id="fileInput"
+            />
+            <label htmlFor="fileInput">
+              <IoImagesOutline
+                size={30}
+                className={`cursor-pointer ${
+                  uploading ? "text-blue-500" : "text-gray-500"
+                }`}
+              />
+            </label>
+            {uploading && (
+              <span className="text-sm text-blue-500">Uploading...</span>
+            )}
+            {error && (
+              <span className="text-sm text-red-500">Upload failed</span>
+            )}
           </div>
         )}
       </div>
-      <RichTextEditor value={content} onChange={setContent} />
-      <button className="mt-5 bg-green-600 w-40 py-2 text-black rounded-md font-bold">
-        Publish
+
+      {formData.img && (
+        <div className="mt-4">
+          <p className="text-sm text-gray-600 mb-2">Featured Image:</p>
+          <Image
+            src={formData.img}
+            alt="Preview"
+            width={300}
+            height={200}
+            className="h-auto rounded-md border object-cover"
+          />
+        </div>
+      )}
+
+      <RichTextEditor
+        value={formData.content}
+        onChange={(content) => setFormData({ ...formData, content })}
+      />
+      <button
+        onClick={handleSubmit}
+        disabled={submitting || uploading}
+        className="mt-5 bg-green-600 w-40 py-2 text-black rounded-md font-bold disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+      >
+        {submitting ? "Publishing..." : "Publish"}
       </button>
     </div>
   );
