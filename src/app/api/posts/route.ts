@@ -18,6 +18,7 @@ export const GET = async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const page = searchParams.get("page");
     const cat = searchParams.get("cat");
+    console.log("Fetching posts for page:", page, "category:", cat);
 
     const query = {
       take: POST_PER_PAGE,

@@ -7,8 +7,9 @@ export const GET = async (
 ) => {
   const slug = params.slug;
   try {
-    const post = await prisma.post.findUnique({
+    const post = await prisma.post.update({
       where: { slug },
+      data: { views: { increment: 1 } },
       include: { user: true, comments: true },
     });
     return new Response(JSON.stringify(post), {

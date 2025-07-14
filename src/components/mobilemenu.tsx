@@ -2,49 +2,137 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { MdOutlineMenu, MdDarkMode, MdLightMode } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { useTheme } from "@/context/ThemeContext";
+import { signOut, useSession } from "next-auth/react";
+import { MdDarkMode, MdLightMode, MdOutlineMenu } from "react-icons/md";
 
 function MobileMenu() {
   const [panel, setpanel] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { status } = useSession();
 
   return (
-    <div onClick={() => setpanel(true)}>
-      <div>
-        <MdOutlineMenu />
-      </div>
+    <div>
+      {/* Menu Button */}
+      <button
+        onClick={() => setpanel(true)}
+        className={`p-2.5 rounded-xl transition-all duration-300 hover:scale-110 ${
+          theme === "dark"
+            ? "bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-gray-300"
+            : "bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-gray-700"
+        }`}
+      >
+        <MdOutlineMenu className="text-xl" />
+      </button>
+
+      {/* Mobile Menu Panel */}
       {panel && (
         <div
-          className={`absolute top-0 right-0 w-full h-full flex flex-col items-center justify-center z-50 ${
-            theme === "light" ? "bg-white text-black" : "bg-gray-900 text-white"
-          }`}
-          onClick={(e) => e.stopPropagation()}
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={() => setpanel(false)}
         >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setpanel(false);
-            }}
-            className={`absolute top-4 right-4 ${
-              theme === "light" ? "text-black" : "text-white"
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+          {/* Menu Content */}
+          <div
+            className={`relative w-[90%] max-w-md rounded-2xl shadow-2xl transition-all duration-300 ${
+              theme === "dark"
+                ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+                : "bg-gradient-to-br from-white via-gray-50 to-white"
             }`}
+            onClick={(e) => e.stopPropagation()}
           >
-            <IoMdClose />
-          </button>
-          <div className="flex flex-col gap-4 font-medium">
+            {/* Close Button */}
             <button
-              className="flex items-center gap-1 justify-center"
-              onClick={toggleTheme}
+              onClick={() => setpanel(false)}
+              className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-300 hover:scale-110 ${
+                theme === "dark"
+                  ? "hover:bg-gray-700 text-gray-300"
+                  : "hover:bg-gray-100 text-gray-600"
+              }`}
             >
-              {theme === "light" ? <MdDarkMode /> : <MdLightMode />}
-              {theme === "light" ? "Dark Mode" : "Light Mode"}
+              <IoMdClose className="text-xl" />
             </button>
-            <Link href="/">Home</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/about">About</Link>
-            <Link href="/login">Login</Link>
+
+            {/* Menu Items */}
+            <div className="p-8 pt-12 space-y-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={() => {
+                  toggleTheme();
+                  setpanel(false);
+                }}
+                className={`w-full flex items-center justify-center gap-3 p-4 rounded-xl font-medium text-base transition-all duration-300 hover:scale-105 ${
+                  theme === "dark"
+                    ? "bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-yellow-400"
+                    : "bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-gray-700"
+                }`}
+              >
+                {theme === "light" ? (
+                  <MdDarkMode className="text-xl" />
+                ) : (
+                  <MdLightMode className="text-xl" />
+                )}
+                {theme === "light" ? "Dark Mode" : "Light Mode"}
+              </button>
+
+              {/* Navigation Links */}
+              <Link
+                href="/"
+                onClick={() => setpanel(false)}
+                className={`block w-full p-4 rounded-xl font-medium text-base text-center transition-all duration-300 hover:scale-105 ${
+                  theme === "dark"
+                    ? "text-gray-300 hover:bg-gray-800/50 hover:text-white"
+                    : "text-gray-700 hover:bg-gray-100/50 hover:text-gray-900"
+                }`}
+              >
+                Home
+              </Link>
+
+              {status === "authenticated" && (
+                <Link
+                  href="/write"
+                  onClick={() => setpanel(false)}
+                  className={`block w-full p-4 rounded-xl font-medium text-base text-center transition-all duration-300 hover:scale-105 ${
+                    theme === "dark"
+                      ? "text-gray-300 hover:bg-gray-800/50 hover:text-blue-400"
+                      : "text-gray-700 hover:bg-gray-100/50 hover:text-blue-600"
+                  }`}
+                >
+                  Write
+                </Link>
+              )}
+
+              {status === "authenticated" ? (
+                <button
+                  onClick={() => {
+                    signOut();
+                    setpanel(false);
+                  }}
+                  className={`w-full p-4 rounded-xl font-medium text-base transition-all duration-300 hover:scale-105 ${
+                    theme === "dark"
+                      ? "text-gray-300 hover:bg-red-900/30 hover:text-red-400"
+                      : "text-gray-700 hover:bg-red-50 hover:text-red-600"
+                  }`}
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setpanel(false)}
+                  className={`block w-full p-4 rounded-xl font-medium text-base text-center bg-gradient-to-r transition-all duration-300 hover:scale-105 hover:shadow-lg text-white ${
+                    theme === "dark"
+                      ? "from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      : "from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  }`}
+                >
+                  Login
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       )}

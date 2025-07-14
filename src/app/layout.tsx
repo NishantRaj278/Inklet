@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { ThemeProvider } from "@/context/ThemeContext";
 import AuthProvider from "@/components/AuthProvider";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
@@ -26,9 +27,11 @@ export default function RootLayout({
       <body className={`${jetbrainsMono.variable} antialiased`}>
         <AuthProvider>
           <ThemeProvider>
-            <Navbar />
-            {children}
-            <Footer />
+            <LayoutWrapper>
+              <Navbar />
+              {children}
+              <Footer />
+            </LayoutWrapper>
           </ThemeProvider>
         </AuthProvider>
       </body>
