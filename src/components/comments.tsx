@@ -9,7 +9,7 @@ import { FaComments, FaPaperPlane } from "react-icons/fa";
 
 const fetcher = async (postSlug: string) => {
   const res = await fetch(
-    `http://localhost:3000/api/comments?postSlug=${postSlug}`,
+    `https://inklet-seven.vercel.app/api/comments?postSlug=${postSlug}`,
     {
       cache: "no-store",
     }
@@ -32,7 +32,7 @@ function Comments({ postSlug }: { postSlug: string }) {
 
     setIsSubmitting(true);
     try {
-      await fetch("http://localhost:3000/api/comments", {
+      await fetch("https://inklet-seven.vercel.app/api/comments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
