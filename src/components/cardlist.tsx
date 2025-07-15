@@ -6,7 +6,7 @@ import Pagination from "./pagination";
 import { useTheme } from "@/context/ThemeContext";
 
 const getData = async (page: number) => {
-  const response = await fetch(`http://localhost:3000/api/posts?page=${page}`);
+  const response = await fetch(`https://inklet-seven.vercel.app/api/posts?page=${page}`);
   if (!response.ok) {
     throw new Error("Failed to fetch posts");
   }
