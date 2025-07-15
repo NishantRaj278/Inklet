@@ -3,9 +3,9 @@ const prisma = new PrismaClient();
 
 export const GET = async (
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) => {
-  const slug = params.slug;
+  const { slug } = await params;
   try {
     const post = await prisma.post.update({
       where: { slug },
