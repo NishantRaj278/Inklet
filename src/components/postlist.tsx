@@ -5,7 +5,7 @@ import Card from "./card";
 import { useTheme } from "@/context/ThemeContext";
 
 const getData = async (cat: string) => {
-  const response = await fetch(`http://localhost:3000/api/blog?cat=${cat}`, {
+  const response = await fetch(`https://inklet-seven.vercel.app/api/blog?cat=${cat}`, {
     cache: "no-store",
   });
   if (!response.ok) {

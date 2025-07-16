@@ -5,7 +5,7 @@ import MostPopularItems from "./mostpopularitems";
 import { useTheme } from "@/context/ThemeContext";
 
 const getData = async () => {
-  const response = await fetch("http://localhost:3000/api/popular");
+  const response = await fetch("https://inklet-seven.vercel.app/api/popular");
   if (!response.ok) {
     throw new Error("Failed to fetch popular posts");
   }

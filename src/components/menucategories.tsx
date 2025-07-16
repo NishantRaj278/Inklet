@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
 
 const getData = async () => {
-  const response = await fetch("http://localhost:3000/api/categories");
+  const response = await fetch("https://inklet-seven.vercel.app/api/categories");
   if (!response.ok) {
     throw new Error("Failed to fetch categories");
   }
