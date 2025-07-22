@@ -133,7 +133,7 @@ function Footer() {
                   Navigation
                 </h3>
                 <div className="space-y-3">
-                  {["home", "write", "login"].map((link) => (
+                  {["home", "Write", "Login"].map((link) => (
                     <Link
                       key={link}
                       href={link === "home" ? "/" : `/${link.toLowerCase()}`}
@@ -164,7 +164,7 @@ function Footer() {
                   {["Fashion", "Food", "Coding", "Travel"].map((tag) => (
                     <Link
                       key={tag}
-                      href={`/blog?tag=${tag.toLowerCase()}`}
+                      href={`/blog?cat=${tag.toLowerCase()}`}
                       className={`block text-sm transition-all duration-300 hover:translate-x-2 ${
                         theme === "dark"
                           ? "text-gray-300 hover:text-purple-400"
