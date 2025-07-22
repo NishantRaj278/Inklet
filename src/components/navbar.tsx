@@ -24,45 +24,54 @@ function Navbar() {
       }`}
     >
       {/* Social Icons */}
-      <div className="flex gap-3 sm:gap-4">
+      <div className="flex gap-1 sm:gap-1">
         <div
           className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
             theme === "dark" ? "hover:bg-gray-800/50" : "hover:bg-gray-100/50"
           }`}
         >
-          <IoLogoInstagram
-            className={`text-lg sm:text-xl cursor-pointer transition-colors ${
-              theme === "dark"
-                ? "text-gray-300 hover:text-pink-400"
-                : "text-gray-600 hover:text-pink-600"
-            }`}
-          />
+          <Link href="https://www.instagram.com/nishantraj._/" target="_blank">
+            <IoLogoInstagram
+              className={`text-lg sm:text-xl cursor-pointer transition-colors ${
+                theme === "dark"
+                  ? "text-gray-300 hover:text-pink-400"
+                  : "text-gray-600 hover:text-pink-600"
+              }`}
+            />
+          </Link>
         </div>
         <div
           className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
             theme === "dark" ? "hover:bg-gray-800/50" : "hover:bg-gray-100/50"
           }`}
         >
-          <FaGithub
-            className={`text-lg sm:text-xl cursor-pointer transition-colors ${
-              theme === "dark"
-                ? "text-gray-300 hover:text-white"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          />
+          <Link href="https://github.com/NishantRaj278" target="_blank">
+            <FaGithub
+              className={`text-lg sm:text-xl cursor-pointer transition-colors ${
+                theme === "dark"
+                  ? "text-gray-300 hover:text-white"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            />
+          </Link>
         </div>
         <div
           className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
             theme === "dark" ? "hover:bg-gray-800/50" : "hover:bg-gray-100/50"
           }`}
         >
-          <FaLinkedin
-            className={`text-lg sm:text-xl cursor-pointer transition-colors ${
-              theme === "dark"
-                ? "text-gray-300 hover:text-blue-400"
-                : "text-gray-600 hover:text-blue-600"
-            }`}
-          />
+          <Link
+            href="https://www.linkedin.com/in/nishantraj1234/"
+            target="_blank"
+          >
+            <FaLinkedin
+              className={`text-lg sm:text-xl cursor-pointer transition-colors ${
+                theme === "dark"
+                  ? "text-gray-300 hover:text-blue-400"
+                  : "text-gray-600 hover:text-blue-600"
+              }`}
+            />
+          </Link>
         </div>
       </div>
 
